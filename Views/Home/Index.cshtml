@@ -313,7 +313,7 @@
             @foreach (var product in Model)
             {
                 <div class="product-card">
-                    <img src="~/images/products/@(product.ProductId).jpg" alt="@product.ProductName" />
+                    <img src="@product.ImageUrl" alt="@product.ProductName" />
                     <div class="product-card-body">
                         <div class="product-card-title">@product.ProductName</div>
                         <div class="product-card-category">@product.CategoryName</div>

@@ -78,9 +78,11 @@
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="ImageUrl" class="control-label"></label>
-                        <input asp-for="ImageUrl" class="form-control" type="text" />
+                        <label asp-for="ImageFile" class="control-label"></label>
+                        <input asp-for="ImageFile" class="form-control" type="file" />
+                        <span asp-validation-for="ImageFile" class="text-danger"></span>
                     </div>
+
 
                     <div class="form-group">
                         <label asp-for="Status" class="control-label"></label>
@@ -92,12 +94,15 @@
                         </select>
                         <span asp-validation-for="Status" class="text-danger"></span>
                     </div>
-
                     <div class="form-group">
-                        <label asp-for="CategoryName" class="control-label"></label>
-                        <input asp-for="CategoryName" class="form-control" />
-                        <span asp-validation-for="CategoryName" class="text-danger"></span>
+                        <label asp-for="CategoryId" class="control-label"></label>
+                        <select asp-for="CategoryId" class="form-control"
+                                asp-items="@(new SelectList(ViewBag.Categories, "categoryId", "categoryName"))">
+                            <option value="">-- Select Category --</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
                     </div>
+
 
                     <div class="form-group mt-3">
                         <input type="submit" value="Create" class="btn btn-primary" />

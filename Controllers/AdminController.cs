@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Endterm_IPT.Models;
 using Endterm_IPT.DataAccess;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Data;
 using System.Xml.Linq;
@@ -36,7 +37,7 @@ namespace Endterm_IPT.Controllers
         // Index
         public IActionResult ProductIndex()
         {
-            string query = "SELECT * FROM products";
+            string query = "SELECT p.*, c.CategoryName FROM products p JOIN categories c ON p.CategoryId = c.CategoryId";
             DataTable dt = _databaseHelper.SelectQuery(query);
             List<Product> sqlProducts = new List<Product>();
 
@@ -63,20 +64,47 @@ namespace Endterm_IPT.Controllers
         // Create Product (SQL)
         public IActionResult ProductCreate()
         {
+            ViewBag.Categories = GetCategories();
             return View();
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ProductCreate(Product prod)
+
+        public IActionResult ProductCreate(Product product)
         {
             if (!ModelState.IsValid)
-                return View(prod);
+            {
 
-            string query = $"INSERT INTO products (ProductName, Description, BasePrice, Stock, ImageUrl, Status, CategoryName) VALUES ('{prod.ProductName}', '{prod.Description}', {prod.BasePrice}, {prod.Stock}, '{prod.ImageUrl}', '{prod.Status}', '{prod.CategoryName}')";
-            _databaseHelper.ExecuteQuery(query);
+                   if (product.ImageFile != null && product.ImageFile.Length > 0)
+        {
+            string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "products");
+            if (!Directory.Exists(uploadsFolder))
+                Directory.CreateDirectory(uploadsFolder);
 
-            return RedirectToAction("ProductIndex");
+            string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(product.ImageFile.FileName);
+            string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                product.ImageFile.CopyTo(fileStream);
+            }
+
+            product.ImageUrl = "/images/products/" + uniqueFileName;
+        }
+        else
+        {
+            product.ImageUrl = ""; 
+        }
+
+                string query = $"INSERT INTO products (productName, description, basePrice, stock, imageUrl, status, categoryId) VALUES ('{product.ProductName}', '{product.Description}', {product.BasePrice}, {product.Stock}, '{product.ImageUrl}', '{product.Status}', {product.CategoryId})";
+                _databaseHelper.ExecuteQuery(query);
+                return RedirectToAction("ProductIndex");
+            }
+
+            ViewBag.Categories = GetCategories(); 
+            return View(product);
         }
 
         // Edit Product
@@ -84,7 +112,6 @@ namespace Endterm_IPT.Controllers
         {
             string query = $"SELECT * FROM products WHERE ProductId = {id}";
             DataTable dt = _databaseHelper.SelectQuery(query);
-
             if (dt.Rows.Count == 0) return NotFound();
 
             DataRow row = dt.Rows[0];
@@ -97,19 +124,43 @@ namespace Endterm_IPT.Controllers
                 Stock = Convert.ToInt32(row["Stock"]),
                 ImageUrl = row["ImageUrl"].ToString(),
                 Status = row["Status"].ToString(),
-                CategoryName = row["CategoryName"].ToString()
+                CategoryId = Convert.ToInt32(row["CategoryId"]),
             };
 
+            ViewBag.Categories = GetCategories();
             return View(product);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult ProductEdit(Product product)
         {
-            if (!ModelState.IsValid) return View(product);
+            if (ModelState.IsValid)
+            {
+                ViewBag.Categories = GetCategories();
+                return View(product);
+            }
 
-            string query = $"UPDATE products SET ProductName = '{product.ProductName}', Description = '{product.Description}', BasePrice = {product.BasePrice}, Stock = {product.Stock}, ImageUrl = '{product.ImageUrl}', Status = '{product.Status}', CategoryName = '{product.CategoryName}' WHERE ProductId = {product.ProductId}";
+            if (product.ImageFile != null && product.ImageFile.Length > 0)
+            {
+                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "products");
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+
+                string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(product.ImageFile.FileName);
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    product.ImageFile.CopyTo(fileStream);
+                }
+
+                product.ImageUrl = "/images/products/" + uniqueFileName;
+            }
+
+
+            string query = $"UPDATE products SET ProductName = '{product.ProductName}', Description = '{product.Description}', BasePrice = {product.BasePrice}, Stock = {product.Stock}, ImageUrl = '{product.ImageUrl}', Status = '{product.Status}', CategoryId = {product.CategoryId} WHERE ProductId = {product.ProductId}";
             _databaseHelper.ExecuteQuery(query);
 
             return RedirectToAction("ProductIndex");
@@ -292,5 +343,30 @@ namespace Endterm_IPT.Controllers
 
             xmlDoc.Save(_xmlFilePath);
         }
+
+
+        private List<Categories> GetCategories()
+        {
+            string query = "SELECT * FROM categories";
+            DataTable dt = _databaseHelper.SelectQuery(query);
+
+            List<Categories> categories = new List<Categories>();
+            foreach (DataRow row in dt.Rows)
+            {
+                categories.Add(new Categories
+                {
+                    categoryId = Convert.ToInt32(row["CategoryId"]),
+                    categoryName = row["CategoryName"].ToString(),
+                    categoryDescription = row["Description"].ToString()
+                });
+            }
+
+            return categories;
+        }
+
     }
+
+
+
+
 }

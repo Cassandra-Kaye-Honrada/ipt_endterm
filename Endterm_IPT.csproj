@@ -26,6 +26,8 @@
   <ItemGroup>
     <None Include="wwwroot\Schemas\products.xml" />
     <Folder Include="Views\Admin\" />
+    <Folder Include="wwwroot\images\NewFolder\" />
+    <Folder Include="wwwroot\NewFolder\" />
     <Folder Include="wwwroot\Schemas\" />
   </ItemGroup>
 

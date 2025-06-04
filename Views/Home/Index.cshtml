@@ -292,35 +292,15 @@
     <!-- Hero Section -->
     <section class="hero-banner">
         <div class="hero-banner-content">
-            <h1>Level Up Your Tech</h1>
-            <p>Explore top gadgets from smartphones to smartwatches—all in one place.</p>
-            <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Shop Now</a>
-        </div>
-    </section>
-
-    <!-- Categories -->
-    <section class="categories">
-        <div class="category-card">
-            <img src="~/images/icons/phone.png" alt="Smartphones" />
-            <h5>Smartphones</h5>
-        </div>
-        <div class="category-card">
-            <img src="~/images/icons/laptop.png" alt="Laptops" />
-            <h5>Laptops</h5>
-        </div>
-        <div class="category-card">
-            <img src="~/images/icons/watch.png" alt="Wearables" />
-            <h5>Wearables</h5>
-        </div>
-        <div class="category-card">
-            <img src="~/images/icons/accessory.png" alt="Accessories" />
-            <h5>Accessories</h5>
+            @* <h1>Level Up Your Tech</h1> *@
+            @* <p>Explore top gadgets from smartphones to smartwatches—all in one place.</p>
+            <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Shop Now</a> *@
         </div>
     </section>
 
     <!-- Featured Products -->
     <section class="featured-products-section">
-        <h2>Featured Products</h2>
+        <h2>Find products you may like</h2>
         <div class="product-carousel">
             @foreach (var product in Model)
             {
@@ -342,8 +322,9 @@
         <div class="footer-top">Gadget Shop &copy; @DateTime.Now.Year</div>
         <div class="footer-links">
             <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Help</a>
+            <a asp-controller="Static" asp-action="About">About</a>
+            <a asp-controller="Static" asp-action="Contact">Contact</a>
+            <a asp-controller="Static" asp-action="FAQs">FAQs</a>
         </div>
     </footer>
 

@@ -1,0 +1,66 @@
+﻿@{
+    ViewData["Title"] = "About Us";
+    Layout = "_Layout";
+}
+
+<style>
+    .about-section {
+        background: linear-gradient(to bottom right, #f8f9fa, #e3e6ea);
+        border-radius: 1rem;
+        padding: 3rem 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+    }
+
+    .about-image {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .about-image:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+    .about-title {
+        font-weight: 700;
+        color: #212529;
+    }
+
+    .lead {
+        font-size: 1.2rem;
+        color: #495057;
+    }
+
+    .stat-highlight {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #0d6efd;
+    }
+</style>
+
+<div class="container my-5">
+    <div class="about-section">
+        <div class="row align-items-center">
+            <!-- Left Image Column -->
+            <div class="col-md-6 mb-4 mb-md-0">
+                <img src="~/images/lenovo12.png" alt="Our Store" class="img-fluid rounded shadow about-image" />
+            </div>
+
+            <!-- Right Text Column -->
+            <div class="col-md-6 ps-md-5">
+                <h2 class="about-title mb-3"> Welcome to Lenovo PH</h2>
+                <p class="lead">
+                    At <strong>Lenovo</strong>, we're passionate about delivering <span class="stat-highlight">cutting-edge gadgets</span> and smart devices that elevate your lifestyle.
+                    From powerful laptops to the latest mobile accessories, we curate products that are reliable, stylish, and future-ready.
+                </p>
+                <p>
+                    Founded in <strong>2015</strong>, our mission has always been to bring quality technology closer to every Filipino home.
+                    With over <span class="stat-highlight">50,000+ happy customers</span>, we’re proud to be one of the most trusted gadget stores in the country.
+                </p>
+                <p>
+                    Whether you visit our physical branches or shop online, one thing remains the same:
+                    <strong>tech shopping has never been this easy, fun, and reliable</strong>.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

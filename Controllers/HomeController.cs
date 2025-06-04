@@ -22,8 +22,7 @@ namespace Quibol_ASS2_3D.Controllers
                 SELECT p.ProductId, p.ProductName, p.Description, p.BasePrice, 
                 p.Stock, p.ImageUrl, p.Status, c.CategoryName
                 FROM Products p
-                INNER JOIN Categories c ON p.CategoryId = c.CategoryId
-                WHERE p.Status = 'Active'";
+                INNER JOIN Categories c ON p.CategoryId = c.CategoryId";
 
             DataTable dt = _databaseHelper.selectQuery(query);
 

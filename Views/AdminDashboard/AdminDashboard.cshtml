@@ -3,76 +3,101 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        background-color: #f4f6f8;
+    }
+
+    h1 {
+        font-size: 32px;
+        margin-bottom: 30px;
+        color: #2f3542;
+    }
+
+    .dashboard-wrapper {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-areas:
+            "reports orders"
+            "products categories";
+        grid-gap: 20px;
+    }
+
+    .card {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        text-align: center;
+        text-decoration: none;
+        color: #2f3542;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        body {
-            background-color: #f4f6f8;
-            
+        .card h3 {
+            font-size: 20px;
         }
 
-        h1 {
-            font-size: 32px;
-            margin-bottom: 30px;
-            color: #2f3542;
-        }
+    .reports {
+        grid-area: reports;
+    }
 
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
+    .orders {
+        grid-area: orders;
+    }
 
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            text-decoration: none;
-            color: #2f3542;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
+    .products {
+        grid-area: products;
+    }
 
-            .card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            }
+    .categories {
+        grid-area: categories;
+    }
 
-            .card h3 {
-                font-size: 20px;
-            }
-    </style>
-</head>
-<body>
 
+    {
+        grid-template-areas:
+            "reports"
+            "orders"
+            "products"
+            "categories";
+    }
+
+    }
+</style>
+
+<div class="dashboard-wrapper">
     <h1>Dashboard</h1>
 
     <div class="dashboard-grid">
-        <a href="#products" class="card">
-            <h3>Products</h3>
-        </a>
-        <a asp-route="CategoriesAdmin" class="card">
-            <h3>Categories</h3>
-        </a>
-        <a href="#orders" class="card">
-            <h3>Orders</h3>
-        </a>
-        <a href="#reports" class="card">
+        <a href="#reports" class="card reports">
             <h3>Reports</h3>
         </a>
+        <a href="#orders" class="card orders">
+            <h3>Orders</h3>
+        </a>
+        <a asp-controller="Admin" asp-action="ProductIndex" class="card products">
+            <h3>Products</h3>
+        </a>
+        <a asp-controller="AdminCategories" asp-action="Index" class="card categories">
+            <h3>Categories</h3>
+        </a>
     </div>
-
-</body>
-</html>
+</div>

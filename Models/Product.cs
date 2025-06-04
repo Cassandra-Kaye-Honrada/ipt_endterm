@@ -10,8 +10,8 @@ namespace Endterm_IPT.Models
         public string Description { get; set; }
         public decimal BasePrice { get; set; }
         public int Stock { get; set; }
-        [Display(Name = "Product Image")]
 
+        [Display(Name = "Product Image")]
         public string ImageUrl { get; set; }
         public IFormFile ImageFile { get; set; }
         public string Status { get; set; }

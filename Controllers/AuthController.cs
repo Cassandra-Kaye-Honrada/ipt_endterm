@@ -18,18 +18,15 @@ namespace Endterm_IPT.Controllers
         }
 
         [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
+        public IActionResult Register() => View();
 
         [HttpPost]
         public IActionResult Register(User model)
         {
             if (ModelState.IsValid)
             {
-                string querys = $"SELECT * FROM Users WHERE Email='{model.Email}'";
-                DataTable dt = _databaseHelper.selectQuery(querys);
+                string checkQuery = $"SELECT * FROM Users WHERE Email='{model.Email}'";
+                DataTable dt = _databaseHelper.selectQuery(checkQuery);
 
                 if (dt.Rows.Count > 0)
                 {
@@ -38,20 +35,49 @@ namespace Endterm_IPT.Controllers
                 }
 
                 string hashedPassword = HashPassword(model.PasswordHash);
+                string insertQuery = $"INSERT INTO Users (Email, PasswordHash, FirstName, LastName, Address, City, State, ZipCode, Phone, IsAdmin, RegistrationDate) " +
+                                     $"VALUES ('{model.Email}', '{hashedPassword}', '{model.FirstName}', '{model.LastName}', '{model.Address}', '{model.City}', '{model.State}', '{model.ZipCode}', '{model.Phone}', {model.IsAdmin}, '{model.RegistrationDate:yyyy-MM-dd HH:mm:ss}')";
 
-                string newquery = $"INSERT INTO Users (Email, PasswordHash, FirstName, LastName, Address, City, State, ZipCode, Phone, IsAdmin, RegistrationDate) " +
-                                  $"VALUES ('{model.Email}', '{hashedPassword}', '{model.FirstName}', '{model.LastName}', '{model.Address}', '{model.City}', '{model.State}', '{model.ZipCode}', '{model.Phone}', {model.IsAdmin}, '{model.RegistrationDate:yyyy-MM-dd HH:mm:ss}')";
-
-                int result = _databaseHelper.executeQuery(newquery);
-
-                if (result > 0)
-                {
-                    return RedirectToAction("Login");
-                }
+                int result = _databaseHelper.executeQuery(insertQuery);
+                if (result > 0) return RedirectToAction("Login");
             }
 
             return View(model);
         }
+
+        [HttpGet]
+        public IActionResult Login() => View();
+
+        [HttpPost]
+        public IActionResult Login(Login model)
+        {
+            if (ModelState.IsValid)
+            {
+                string hashedPassword = HashPassword(model.Password);
+                string query = $"SELECT * FROM Users WHERE Email = '{model.Email}' AND PasswordHash = '{hashedPassword}'";
+
+                DataTable dt = _databaseHelper.selectQuery(query);
+
+                if (dt.Rows.Count > 0)
+                {
+                    var user = dt.Rows[0];
+                    bool isAdmin = Convert.ToBoolean(user["IsAdmin"]);
+
+                    HttpContext.Session.SetString("Email", user["Email"].ToString());
+                    HttpContext.Session.SetString("FirstName", user["FirstName"].ToString());
+                    HttpContext.Session.SetString("IsAdmin", isAdmin.ToString());
+
+                    return isAdmin
+                        ? RedirectToAction("AdminDashboard", "AdminDashboard")
+                        : RedirectToAction("Index", "Home");
+                }
+
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            }
+
+            return View(model);
+        }
+
         [HttpPost]
         public IActionResult Logout()
         {
@@ -65,64 +91,12 @@ namespace Endterm_IPT.Controllers
             return RedirectToAction("Login", "Auth");
         }
 
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Login(Login model)
-        {
-            if (ModelState.IsValid)
-            {
-                string hashedPassword = HashPassword(model.Password);
-
-                string query = $"SELECT * FROM Users WHERE Email = '{model.Email}' AND PasswordHash = '{hashedPassword}'";
-                DataTable dt = _databaseHelper.selectQuery(query);
-
-                if (dt.Rows.Count > 0)
-                {
-
-
-                    var user = dt.Rows[0];
-
-                    // Get IsAdmin directly from the database
-                    bool isAdmin = Convert.ToBoolean(user["IsAdmin"]);
-
-                    // Store session data
-                    HttpContext.Session.SetString("Email", user["Email"].ToString());
-                    HttpContext.Session.SetString("FirstName", user["FirstName"].ToString());
-                    HttpContext.Session.SetString("IsAdmin", isAdmin.ToString());
-
-                    // Redirect based on IsAdmin value
-                    if (isAdmin)
-                    {
-                        //return RedirectToAction("Dashboard", "Admin");
-                        return RedirectToAction("AdminDashboard","AdminDashboard");
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "Home");
-                      
-                    }
-                }
-
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-            }
-
-            return View(model);
-        }
-
         private string HashPassword(string password)
         {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] bytes = Encoding.UTF8.GetBytes(password);
-                byte[] hash = sha256.ComputeHash(bytes);
-                return Convert.ToBase64String(hash);
-            }
+            using SHA256 sha256 = SHA256.Create();
+            byte[] bytes = Encoding.UTF8.GetBytes(password);
+            byte[] hash = sha256.ComputeHash(bytes);
+            return Convert.ToBase64String(hash);
         }
-
     }
 }

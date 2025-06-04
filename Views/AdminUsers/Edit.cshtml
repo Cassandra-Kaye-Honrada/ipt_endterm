@@ -1,0 +1,86 @@
+﻿@model Endterm_IPT.Models.User
+
+@{
+    ViewData["Title"] = "Edit User";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-pencil-square"></i> Edit User</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <input type="hidden" asp-for="UserId" />
+                        <input type="hidden" asp-for="PasswordHash" />
+                        <input type="hidden" asp-for="IsAdmin" />
+                        <input type="hidden" asp-for="RegistrationDate" />
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Email" class="form-control" />
+                            <label asp-for="Email"></label>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="FirstName" class="form-control" />
+                            <label asp-for="FirstName"></label>
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="LastName" class="form-control" />
+                            <label asp-for="LastName"></label>
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Address" class="form-control" />
+                            <label asp-for="Address"></label>
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="City" class="form-control" />
+                            <label asp-for="City"></label>
+                            <span asp-validation-for="City" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="State" class="form-control" />
+                            <label asp-for="State"></label>
+                            <span asp-validation-for="State" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="ZipCode" class="form-control" />
+                            <label asp-for="ZipCode"></label>
+                            <span asp-validation-for="ZipCode" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <input asp-for="Phone" class="form-control" />
+                            <label asp-for="Phone"></label>
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-route="ViewUsers" class="btn btn-secondary">← Back to List</a>
+                            <button type="submit" class="btn btn-success">💾 Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

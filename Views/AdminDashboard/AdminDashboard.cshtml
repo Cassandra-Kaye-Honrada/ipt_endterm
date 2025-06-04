@@ -4,6 +4,7 @@
 }
 
 <style>
+    <style>
     * {
         box-sizing: border-box;
         margin: 0;
@@ -31,7 +32,8 @@
         display: grid;
         grid-template-areas:
             "reports orders"
-            "products categories";
+            "products categories"
+            "users users";
         grid-gap: 20px;
     }
 
@@ -46,14 +48,14 @@
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
 
-        .card h3 {
-            font-size: 20px;
-        }
+    .card h3 {
+        font-size: 20px;
+    }
 
     .reports {
         grid-area: reports;
@@ -71,16 +73,12 @@
         grid-area: categories;
     }
 
-
-    {
-        grid-template-areas:
-            "reports"
-            "orders"
-            "products"
-            "categories";
+    .users {
+        grid-area: users;
     }
+</style>
 
-    }
+    
 </style>
 
 <div class="dashboard-wrapper">
@@ -90,7 +88,7 @@
         <a href="#reports" class="card reports">
             <h3>Reports</h3>
         </a>
-        <a href="#orders" class="card orders">
+        <a asp-route="ViewOrders" class="card orders">
             <h3>Orders</h3>
         </a>
         <a asp-controller="Admin" asp-action="ProductIndex" class="card products">
@@ -99,11 +97,8 @@
         <a asp-controller="AdminCategories" asp-action="Index" class="card categories">
             <h3>Categories</h3>
         </a>
-        <a href="#orders" class="card">
-            <h3>Orders</h3>
-        </a>
-        <a href="#reports" class="card">
-            <h3>Reports</h3>
+        <a asp-route="ViewUsers" class="card users">
+            <h3>Users</h3>
         </a>
     </div>
 </div>

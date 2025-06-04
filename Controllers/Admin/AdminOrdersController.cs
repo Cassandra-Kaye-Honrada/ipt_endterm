@@ -15,10 +15,34 @@ namespace Endterm_IPT.Controllers.Admin
             string connString = "Server=localhost;Database=onlinestore;User Id=root;Password='';";
             _databaseHelper = new DatabaseHelper(connString);
         }
-        [Route("orderView", Name ="ViewOrders")]
-        public ActionResult Index()
+        [Route("orderView/{id?}", Name ="ViewOrders")]
+        public ActionResult Index(int? id)
         {
-            string query = @"
+            string query = "";
+            if(id != null)
+            {
+                 query = @$"
+                SELECT 
+                    users.FirstName, 
+                    users.LastName, 
+                    checkout.OrderId,
+                    checkout.OrderDate, 
+                    checkout.Status, 
+                    checkout.ShippingAddress, 
+                    checkout.ShippingCity, 
+                    checkout.ShippingState, 
+                    checkout.ShippingZipCode, 
+                    checkout.PaymentMethod
+                FROM 
+                    checkout
+                INNER JOIN 
+                    users ON checkout.UserId = users.UserId 
+                where 
+                    checkout.UserId = {id}";
+            }
+            else
+            {
+                 query = @"
                 SELECT 
                     users.FirstName, 
                     users.LastName, 
@@ -34,6 +58,8 @@ namespace Endterm_IPT.Controllers.Admin
                     checkout
                 INNER JOIN 
                     users ON checkout.UserId = users.UserId";
+            }
+            
             DataTable dt = _databaseHelper.SelectQuery(query);
             List<Order>sqlOrders = new List<Order>();
             foreach (DataRow row in dt.Rows)

@@ -1,0 +1,18 @@
+@{
+    ViewData["Title"] = "Session Test";
+}
+
+<h2>Session Test</h2>
+
+@if (ViewBag.UserEmail == null)
+{
+    <div class="alert alert-warning">Login ka muna be.</div>
+}
+else
+{
+    <div class="alert alert-success">
+        <strong>Session is working!</strong><br />
+        User Email: @ViewBag.UserEmail <br />
+        User Name: @ViewBag.UserName
+    </div>
+}

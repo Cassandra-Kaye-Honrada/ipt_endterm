@@ -1,65 +1,98 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var userEmail = Context.Session.GetString("Email");
+    var userName = Context.Session.GetString("FirstName");
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewBag.Title - Admin Panel</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f8;
+            background-color: #f9f9f9;
         }
 
-        header {
-            background-color: #2f3542;
-            color: white;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .admin-navbar {
+            background-color: #fff;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
 
-        header .logo {
-            font-size: 20px;
-            font-weight: bold;
-        }
+            .admin-navbar .nav-link {
+                color: #000;
+                font-weight: 500;
+                transition: color 0.2s ease;
+            }
 
-        nav a {
-            color: white;
-            margin-left: 20px;
-            text-decoration: none;
-            font-size: 16px;
-            transition: color 0.2s ease;
-        }
+                .admin-navbar .nav-link:hover,
+                .admin-navbar .btn-link:hover {
+                    color: #e31837;
+                    text-decoration: none;
+                }
 
-        nav a:hover {
-            color: #70a1ff;
+            .admin-navbar .btn-link {
+                color: #000;
+                font-weight: 500;
+                border: none;
+                background: none;
+            }
+
+            .admin-navbar .logo-text {
+                font-size: 20px;
+                font-weight: bold;
+                color: #000;
+            }
+
+        .user-greeting {
+            font-weight: 500;
+            color: #333;
+            margin-right: 10px;
         }
 
         main {
-              padding: 40px;
+            padding: 40px;
         }
     </style>
 </head>
 <body>
-    
     <header>
-        <div class="logo">My Admin Panel</div>
-        <nav>
-            <a asp-controller="AdminDashboard" asp-action="AdminDashboard">Dashboard</a>
-            <a asp-controller="Admin" asp-action="ProductIndex">Products</a>
-            <a asp-controller="AdminCategories" asp-action="Index">Categories</a>
-            <a asp-controller="Auth" asp-action="AdminLogout" onclick="return confirm('Are you sure you want to log out?');">Logout</a>
+        <nav class="navbar admin-navbar">
+            <div class="container-fluid">
+                <div class="row w-100 align-items-center">
+                    <!-- Left Nav -->
+                    <div class="col d-flex gap-4">
+                        <a class="nav-link" asp-controller="AdminDashboard" asp-action="AdminDashboard">Dashboard</a>
+                        <a class="nav-link" asp-controller="Admin" asp-action="ProductIndex">Products</a>
+                        <a class="nav-link" asp-controller="AdminCategories" asp-action="Index">Categories</a>
+                    </div>
+
+                    <!-- Center Logo or Text -->
+                    <div class="col text-center">
+                        <span class="logo-text">My Admin Panel</span>
+                    </div>
+
+                    <!-- Right Nav -->
+                    <div class="col d-flex justify-content-end align-items-center gap-3">
+                        <span class="user-greeting">Hello, @userName!</span>
+                        <form method="post" asp-controller="Auth" asp-action="Logout" class="d-inline">
+                            <button type="submit" class="nav-link btn btn-link p-0">Logout</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </nav>
     </header>
 
     <main role="main" class="container">
         @RenderBody()
     </main>
-    @RenderSection("Scripts", required: false)
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

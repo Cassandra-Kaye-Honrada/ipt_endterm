@@ -34,7 +34,6 @@
             <th>BasePrice</th>
             <th>Stock</th>
             <th>ImageUrl</th>
-            <th>Status</th>
             <th>CategoryName</th>
             <th>Actions</th>
         </tr>
@@ -49,16 +48,6 @@
                 <td>@product.BasePrice.ToString("C")</td>
                 <td>@product.Stock</td>
                 <td>@product.ImageUrl</td>
-                <td>
-                    @if (product.Status == "Active")
-                    {
-                        <span class="badge bg-success">Active</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-secondary">Inactive</span>
-                    }
-                </td>
                 <td>@product.CategoryName</td>
                 <td>
                     <a asp-action="ProductEdit" asp-route-id="@product.ProductId" class="btn btn-primary btn-sm">Edit</a>

@@ -48,7 +48,7 @@
                 <td>@product.Description</td>
                 <td>@product.BasePrice.ToString("C")</td>
                 <td>@product.Stock</td>
-                <td>@product.ImageUrl</td>
+                <td><img src="@product.ImageUrl" alt="Alternate Text" /></td>
                 <td>
                     @if (product.Status == "Active")
                     {

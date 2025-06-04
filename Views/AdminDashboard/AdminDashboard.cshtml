@@ -1,0 +1,78 @@
+﻿@{
+    ViewBag.Title = "Admin Categories";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f8;
+            
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: #2f3542;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            text-decoration: none;
+            color: #2f3542;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            .card h3 {
+                font-size: 20px;
+            }
+    </style>
+</head>
+<body>
+
+    <h1>Dashboard</h1>
+
+    <div class="dashboard-grid">
+        <a href="#products" class="card">
+            <h3>Products</h3>
+        </a>
+        <a asp-route="CategoriesAdmin" class="card">
+            <h3>Categories</h3>
+        </a>
+        <a href="#orders" class="card">
+            <h3>Orders</h3>
+        </a>
+        <a href="#reports" class="card">
+            <h3>Reports</h3>
+        </a>
+    </div>
+
+</body>
+</html>

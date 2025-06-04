@@ -1,0 +1,68 @@
+﻿@model IEnumerable<Endterm_IPT.Models.Product>
+
+@{
+    ViewData["Title"] = "View Products";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-primary">Product List</h2>
+    </div>
+
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert alert-info text-center" role="alert">
+            @ViewBag.Message
+        </div>
+    }
+
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.ProductId)</th>
+                    <th>@Html.DisplayNameFor(model => model.ProductName)</th>
+                    <th>@Html.DisplayNameFor(model => model.BasePrice)</th>
+                    <th>@Html.DisplayNameFor(model => model.Stock)</th>
+                    <th>@Html.DisplayNameFor(model => model.Status)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ProductId</td>
+                        <td>@item.ProductName</td>
+                        <td>@item.BasePrice.ToString("C")</td>
+                        <td>@item.Stock</td>
+                        <td>
+                            @if (item.Status == "Active")
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inactive</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                @if (item.Status == "Active")
+                                {
+                                    <a asp-route="UpdateStatusToActive" asp-route-id="@item.ProductId"  class="btn btn-sm btn-warning">Disable</a>
+                                }
+                                else
+                                {
+                                    <a asp-route="UpdateStatusToActive" asp-route-id="@item.ProductId"  class="btn btn-sm btn-success">Enable</a>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

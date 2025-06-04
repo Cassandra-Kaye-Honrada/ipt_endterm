@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Products SYSTEM "products.dtd">
+<Products>
+  <Product>
+    <ProductId>8</ProductId>
+    <ProductName>1</ProductName>
+    <Description>1</Description>
+    <BasePrice>1.00</BasePrice>
+    <Stock>0</Stock>
+    <ImageUrl>1</ImageUrl>
+    <Status>Available</Status>
+    <CategoryName>1</CategoryName>
+  </Product>
+</Products>

@@ -1,0 +1,32 @@
+﻿@model Endterm_IPT.Models.Product
+
+<div class="product-details">
+    <h2>@Model.ProductName</h2>
+    <img src="@Url.Content($"~/images/products/{Model.ProductId}.jpg")"
+         alt="@Model.ProductName"
+         style="max-width:400px;"
+         onerror="this.onerror=null;this.src='@Url.Content("~/images/products/default.jpg")';" />
+
+    <p><strong>Category:</strong> @Model.CategoryName</p>
+    <p><strong>Description:</strong> @Model.Description</p>
+    <p><strong>Price:</strong> ₱@Model.BasePrice</p>
+    <p><strong>Stock:</strong> @Model.Stock</p>
+
+    <form asp-controller="Home" asp-action="AddToCart" method="post">
+        <input type="hidden" name="productId" value="@Model.ProductId" />
+        <input type="number" name="quantity" value="1" min="1" class="form-control mb-2" />
+        <button type="submit" class="btn btn-success w-100">Add to Cart</button>
+    </form>
+</div>
+
+<style>
+    .product-details {
+        padding: 20px;
+        max-width: 600px;
+    }
+
+        .product-details img {
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+</style>

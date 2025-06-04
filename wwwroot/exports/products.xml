@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Products [[
+	                    <!ELEMENT Products (Product+)>
+	                    <!ELEMENT Product (ProductName, Description, BasePrice, Stock, ImageUrl, Status, CategoryName)>
+	                    <!ELEMENT ProductName (#PCDATA)>
+	                    <!ELEMENT Description (#PCDATA)>
+	                    <!ELEMENT BasePrice (#PCDATA)>
+	                    <!ELEMENT Stock (#PCDATA)>
+	                    <!ELEMENT ImageUrl (#PCDATA)>
+	                    <!ELEMENT Status (#PCDATA)>
+	                    <!ELEMENT CategoryName (#PCDATA)>
+                    ]]>
+<Products>
+  <Product>
+    <ProductName>1</ProductName>
+    <Description>1</Description>
+    <BasePrice>1.00</BasePrice>
+    <Stock>1</Stock>
+    <ImageUrl>1</ImageUrl>
+    <Status>1</Status>
+    <CategoryName>1</CategoryName>
+  </Product>
+</Products>

@@ -1,0 +1,70 @@
+﻿@{
+    ViewBag.Title = "Products";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h1 class="mb-4">Products</h1>
+
+<div class="mb-3 d-flex gap-2">
+    <a asp-action="ProductCreate" class="btn btn-success">Add New Product</a>
+    <form method="post" asp-action="ExportProductsToXML" class="d-inline">
+        <button type="submit" class="btn btn-outline-primary">Export to XML</button>
+    </form>
+    <form method="post" asp-action="ImportProductsFromXML" enctype="multipart/form-data" class="d-inline">
+        <input type="file" name="xmlFile" accept=".xml" required class="form-control d-inline w-auto" />
+        <button type="submit" class="btn btn-outline-secondary">Import from XML</button>
+    </form>
+</div>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<table class="table table-hover table-bordered table-striped align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>ProductId</th>
+            <th>ProductName</th>
+            <th>Description</th>
+            <th>BasePrice</th>
+            <th>Stock</th>
+            <th>ImageUrl</th>
+            <th>Status</th>
+            <th>CategoryName</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.ProductId</td>
+                <td>@product.ProductName</td>
+                <td>@product.Description</td>
+                <td>@product.BasePrice.ToString("C")</td>
+                <td>@product.Stock</td>
+                <td>@product.ImageUrl</td>
+                <td>
+                    @if (product.Status == "Active")
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Inactive</span>
+                    }
+                </td>
+                <td>@product.CategoryName</td>
+                <td>
+                    <a asp-action="ProductEdit" asp-route-id="@product.ProductId" class="btn btn-primary btn-sm">Edit</a>
+                    <a asp-action="ProductDelete" asp-route-id="@product.ProductId" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

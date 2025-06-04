@@ -60,13 +60,13 @@
     <h1>Dashboard</h1>
 
     <div class="dashboard-grid">
-        <a asp-controller="AdminController" asp-action="ProductCreate" class="card">
+        <a asp-controller="Admin" asp-action="ProductCreate" class="card">
             <h3>Products</h3>
         </a>
         <a asp-route="CategoriesAdmin" class="card">
             <h3>Categories</h3>
         </a>
-        <a href="#orders" class="card">
+        <a asp-route="ViewOrders" class="card">
             <h3>Orders</h3>
         </a>
         <a href="#reports" class="card">

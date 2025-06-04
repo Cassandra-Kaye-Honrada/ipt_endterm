@@ -1,0 +1,76 @@
+﻿@model IEnumerable<Endterm_IPT.Models.Order>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h1>Orders</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Order Date
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Shipping Address
+            </th>
+            <th>
+                Shipping City
+            </th>
+            <th>
+                Shipping State
+            </th>
+            <th>
+                Shipping Zipcode
+            </th>
+            <th>
+               Payment Method
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ShippingAddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ShippingCity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ShippingState)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ShippingZipCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PaymentMethod)
+            </td>
+                    @if (item.Status == "Pending")
+                    {
+                    <td>
+                        <a asp-route="OrderUpdate" asp-route-id="@item.OrderId"> Accept</a>
+                    </td>
+                    }
+        </tr>
+}
+    </tbody>
+</table>

@@ -500,7 +500,7 @@
 
                             <div class="product-card">
                                 <div class="product-image">
-                                    <img src="~/images/products/@(product.ProductId).jpg" alt="@product.ProductName" />
+                                    <img src="@product.ImageUrl" alt="@product.ProductName" />
                                     <div class="stock-badge @stockBadgeClass">@stockText</div>
                                 </div>
                                 <div class="product-card-body">

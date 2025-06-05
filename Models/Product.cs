@@ -15,7 +15,7 @@ namespace Endterm_IPT.Models
         public string ImageUrl { get; set; }
         public IFormFile ImageFile { get; set; }
         public string Status { get; set; }
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
         public string CategoryName { get; set; }
     }
 }

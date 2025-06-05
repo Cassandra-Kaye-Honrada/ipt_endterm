@@ -66,6 +66,7 @@ namespace Endterm_IPT.Controllers
                     HttpContext.Session.SetString("Email", user["Email"].ToString());
                     HttpContext.Session.SetString("FirstName", user["FirstName"].ToString());
                     HttpContext.Session.SetString("IsAdmin", isAdmin.ToString());
+                    HttpContext.Session.SetString("UserId", user["UserId"].ToString());
 
                     return isAdmin
                         ? RedirectToAction("AdminDashboard", "AdminDashboard")
@@ -97,6 +98,12 @@ namespace Endterm_IPT.Controllers
             byte[] bytes = Encoding.UTF8.GetBytes(password);
             byte[] hash = sha256.ComputeHash(bytes);
             return Convert.ToBase64String(hash);
+        }
+
+        // Helper method to check if user is authenticated
+        public static bool IsUserAuthenticated(HttpContext httpContext)
+        {
+            return !string.IsNullOrEmpty(httpContext.Session.GetString("UserId"));
         }
     }
 }

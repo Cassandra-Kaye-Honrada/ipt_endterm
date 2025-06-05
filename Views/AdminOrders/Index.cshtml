@@ -30,11 +30,11 @@
                         <td>@Html.DisplayFor(modelItem => item.UserName)</td>
                         <td>@item.OrderDate.ToString("MMM dd, yyyy")</td>
                         <td>
-                            @if (item.Status == "Pending")
+                            @if (item.Status.ToLower() == "pending")
                             {
                                 <span class="badge bg-warning text-dark">Pending</span>
                             }
-                            else if (item.Status == "Accepted")
+                            else if (item.Status.ToLower() == "accepted")
                             {
                                 <span class="badge bg-success">Accepted</span>
                             }
@@ -49,7 +49,7 @@
                         <td>@Html.DisplayFor(modelItem => item.ShippingZipCode)</td>
                         <td>@Html.DisplayFor(modelItem => item.PaymentMethod)</td>
                         <td>
-                            @if (item.Status == "Pending")
+                            @if (item.Status.ToLower() == "pending")
                             {
                                 <a asp-route="OrderUpdate" asp-route-id="@item.OrderId" class="btn btn-sm btn-success">
                                     Accept

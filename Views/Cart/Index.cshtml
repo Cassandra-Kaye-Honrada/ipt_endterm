@@ -1,0 +1,675 @@
+﻿@model List<Endterm_IPT.Controllers.CartItem>
+@{
+    ViewData["Title"] = "Shopping Cart";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header with Continue Shopping Button -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <a href="/" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                </a>
+                <h2 class="fw-bold text-dark text-center flex-grow-1">
+                    <i class="fas fa-shopping-cart me-2"></i>Your Shopping Cart
+                </h2>
+                <div style="width: 150px;"></div> <!-- Spacer for balance -->
+            </div>
+
+            @if (Model.Count == 0)
+            {
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-shopping-cart fa-5x text-muted"></i>
+                    </div>
+                    <h4 class="text-muted mb-3">Your cart is empty</h4>
+                    <p class="text-muted mb-4">Looks like you haven't added anything to your cart yet.</p>
+                    <a href="/" class="btn btn-primary btn-lg">
+                        <i class="fas fa-shopping-bag me-2"></i>Start Shopping
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="row g-4">
+                    <!-- Cart Items Section -->
+                    <div class="col-xl-8 col-lg-7">
+                        <div class="cart-items-container">
+                            <div class="cart-header mb-4">
+                                <h5 class="fw-semibold text-dark">Cart Items (@Model.Count)</h5>
+                            </div>
+
+                            @foreach (var item in Model)
+                            {
+                                <div class="cart-item-card mb-3" data-product-id="@item.ProductId">
+                                    <div class="row g-3 align-items-center">
+                                        <!-- Product Image -->
+                                        <div class="col-md-2 col-sm-3">
+                                            <div class="product-image-wrapper">
+                                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                                {
+                                                    <img src="@item.ImageUrl" alt="@item.ProductName" class="product-image">
+                                                }
+                                                else
+                                                {
+                                                    <div class="product-image-placeholder">
+                                                        <i class="fas fa-image"></i>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <!-- Product Details -->
+                                        <div class="col-md-4 col-sm-5">
+                                            <div class="product-details">
+                                                <h6 class="product-name">@item.ProductName</h6>
+                                                <div class="product-info">
+                                                    <span class="price-label">₱@item.BasePrice.ToString("N2")</span>
+                                                    <span class="stock-info">@item.Stock available</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Quantity Controls -->
+                                        <div class="col-md-3 col-sm-4">
+                                            <div class="quantity-controls">
+                                                <button class="quantity-btn decrease"
+                                                        onclick="updateQuantity(@item.ProductId, @(item.Quantity - 1))"
+                                                        @(item.Quantity <= 1 ? "disabled" : "")>
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
+                                                <input type="number" class="quantity-input"
+                                                       value="@item.Quantity"
+                                                       min="1"
+                                                       max="@(item.Stock + item.Quantity)"
+                                                       onchange="updateQuantity(@item.ProductId, parseInt(this.value))"
+                                                       data-product-id="@item.ProductId">
+                                                <button class="quantity-btn increase"
+                                                        onclick="updateQuantity(@item.ProductId, @(item.Quantity + 1))"
+                                                        @(item.Quantity >= (item.Stock + item.Quantity) ? "disabled" : "")>
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Price and Remove -->
+                                        <div class="col-md-3 col-sm-12">
+                                            <div class="item-actions">
+                                                <div class="item-subtotal">
+                                                    ₱@((item.BasePrice * item.Quantity).ToString("N2"))
+                                                </div>
+                                                <button class="remove-btn" onclick="removeItem(@item.ProductId)">
+                                                    <i class="fas fa-trash"></i> Remove
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Order Summary Section -->
+                    <div class="col-xl-4 col-lg-5">
+                        <div class="order-summary-card">
+                            <div class="summary-header">
+                                <h5 class="fw-semibold">Order Summary</h5>
+                            </div>
+                            <div class="summary-content">
+                                <div class="summary-row">
+                                    <span>Subtotal:</span>
+                                    <span class="amount" id="cart-subtotal">₱@ViewBag.CartTotal.ToString("N2")</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Shipping:</span>
+                                    <span class="free-shipping">Free</span>
+                                </div>
+                                <div class="summary-divider"></div>
+                                <div class="summary-total">
+                                    <span>Total:</span>
+                                    <span class="total-amount" id="cart-total">₱@ViewBag.CartTotal.ToString("N2")</span>
+                                </div>
+                                <button class="checkout-btn">
+                                    <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Custom CSS -->
+<style>
+    :root {
+        --primary-color: #e2231a;
+        --primary-hover: #b21b15;
+        --success-color: #28a745;
+        --danger-color: #e74c3c;
+        --light-gray: #f8f9fa;
+        --border-color: #e9ecef;
+        --text-dark: #2c3e50;
+        --text-muted: #6c757d;
+    }
+
+    .container-fluid {
+        max-width: 1400px;
+    }
+
+    /* Cart Items Styling */
+    .cart-items-container {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    .cart-header h5 {
+        color: var(--text-dark);
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 10px;
+        display: inline-block;
+    }
+
+    .cart-item-card {
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 20px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+        .cart-item-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+    /* Product Image */
+    .product-image-wrapper {
+        width: 100%;
+        height: 100px;
+        border-radius: 10px;
+        overflow: hidden;
+        background: var(--light-gray);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .product-image-placeholder {
+        color: var(--text-muted);
+        font-size: 2rem;
+    }
+
+    /* Product Details */
+    .product-details {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .product-name {
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+    }
+
+    .product-info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .price-label {
+        font-weight: 600;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+    }
+
+    .stock-info {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+    }
+
+    /* Quantity Controls */
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        background: var(--light-gray);
+        padding: 8px;
+        border-radius: 25px;
+        width: fit-content;
+        margin: 0 auto;
+    }
+
+    .quantity-btn {
+        width: 35px;
+        height: 35px;
+        border: none;
+        border-radius: 50%;
+        background: white;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+        .quantity-btn:hover:not(:disabled) {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .quantity-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+    .quantity-input {
+        width: 60px;
+        height: 35px;
+        border: none;
+        text-align: center;
+        background: white;
+        border-radius: 8px;
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+
+    /* Item Actions */
+    .item-actions {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .item-subtotal {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    .remove-btn {
+        background: none;
+        border: 1px solid var(--danger-color);
+        color: var(--danger-color);
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 0.9rem;
+    }
+
+        .remove-btn:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+
+    /* Order Summary */
+    .order-summary-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        position: sticky;
+        top: 20px;
+    }
+
+    .summary-header {
+        background: rgba(255,255,255,0.1);
+        padding: 20px;
+        text-align: center;
+    }
+
+        .summary-header h5 {
+            color: white;
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+    .summary-content {
+        padding: 25px;
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(10px);
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        font-size: 1rem;
+    }
+
+    .amount {
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+
+    .free-shipping {
+        color: var(--success-color);
+        font-weight: 600;
+    }
+
+    .summary-divider {
+        height: 2px;
+        background: linear-gradient(90deg, var(--primary-color), transparent);
+        margin: 20px 0;
+    }
+
+    .summary-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    .total-amount {
+        color: var(--primary-color);
+        font-size: 1.4rem;
+    }
+
+    .checkout-btn {
+        width: 100%;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+        color: white;
+        border: none;
+        padding: 15px;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(226, 35, 26, 0.3);
+    }
+
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(226, 35, 26, 0.4);
+        }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .cart-item-card
+
+    {
+        padding: 15px;
+    }
+
+    .product-image-wrapper {
+        height: 80px;
+    }
+
+    .quantity-controls {
+        margin: 10px auto;
+    }
+
+    .item-actions {
+        margin-top: 15px;
+    }
+
+    }
+
+    /* Notification Styles */
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 10px;
+        color: white;
+        font-weight: 600;
+        z-index: 10000;
+        max-width: 350px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        transform: translateX(400px);
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, var(--success-color), #22a046);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, var(--danger-color), #c0392b);
+        }
+</style>
+
+<!-- JavaScript for Cart Functionality -->
+<script>
+    function updateQuantity(productId, newQuantity) {
+        // Validate quantity
+        if (newQuantity < 1) {
+            showNotification('Quantity must be at least 1', 'error');
+            return;
+        }
+
+        const quantityInput = document.querySelector(`input[data-product-id="${productId}"]`);
+        const maxQuantity = parseInt(quantityInput.getAttribute('max'));
+
+        if (newQuantity > maxQuantity) {
+            showNotification('Cannot exceed available stock', 'error');
+            quantityInput.value = quantityInput.getAttribute('data-original-value') || quantityInput.value;
+            return;
+        }
+
+        // Store original value for rollback
+        quantityInput.setAttribute('data-original-value', quantityInput.value);
+
+        // Create form data properly
+        const formData = new FormData();
+        formData.append('productId', productId);
+        formData.append('quantity', newQuantity);
+
+        fetch('/Cart/UpdateQuantity', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Update the quantity input
+                quantityInput.value = newQuantity;
+                quantityInput.removeAttribute('data-original-value');
+
+                // Update cart count in header if function exists
+                if (typeof updateCartBadge === 'function') {
+                    updateCartBadge(data.cartCount);
+                }
+
+                // Update subtotal for this item
+                updateItemSubtotal(productId, newQuantity);
+
+                // Update totals
+                updateCartTotals(data.cartTotal);
+
+                // Update button states
+                updateQuantityButtons(productId, newQuantity, maxQuantity);
+
+                showNotification('Quantity updated successfully', 'success');
+            } else {
+                // Rollback on error
+                const originalValue = quantityInput.getAttribute('data-original-value');
+                if (originalValue) {
+                    quantityInput.value = originalValue;
+                    quantityInput.removeAttribute('data-original-value');
+                }
+                showNotification(data.message || 'Error updating quantity', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Rollback on error
+            const originalValue = quantityInput.getAttribute('data-original-value');
+            if (originalValue) {
+                quantityInput.value = originalValue;
+                quantityInput.removeAttribute('data-original-value');
+            }
+            showNotification('Network error. Please try again.', 'error');
+        });
+    }
+
+    function removeItem(productId) {
+        if (!confirm('Are you sure you want to remove this item from your cart?')) {
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('productId', productId);
+
+        fetch('/Cart/Remove', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Remove the item card with animation
+                const itemCard = document.querySelector(`div[data-product-id="${productId}"]`);
+                itemCard.style.transform = 'translateX(-100%)';
+                itemCard.style.opacity = '0';
+
+                setTimeout(() => {
+                    itemCard.remove();
+                }, 300);
+
+                // Update cart count in header
+                if (typeof updateCartBadge === 'function') {
+                    updateCartBadge(data.cartCount);
+                }
+
+                // Update totals
+                updateCartTotals(data.cartTotal);
+
+                showNotification('Item removed from cart', 'success');
+
+                // Check if cart is empty and reload page
+                if (data.cartCount === 0) {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                }
+            } else {
+                showNotification(data.message || 'Error removing item', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Network error. Please try again.', 'error');
+        });
+    }
+
+    function updateItemSubtotal(productId, newQuantity) {
+        const itemCard = document.querySelector(`div[data-product-id="${productId}"]`);
+        const priceElement = itemCard.querySelector('.price-label');
+        const subtotalElement = itemCard.querySelector('.item-subtotal');
+
+        if (priceElement && subtotalElement) {
+            const priceText = priceElement.textContent.replace('₱', '').replace(',', '');
+            const price = parseFloat(priceText);
+            const subtotal = price * newQuantity;
+            subtotalElement.textContent = `₱${subtotal.toLocaleString('en-PH', {minimumFractionDigits: 2})}`;
+        }
+    }
+
+    function updateCartTotals(cartTotal) {
+        const formattedTotal = `₱${parseFloat(cartTotal).toLocaleString('en-PH', {minimumFractionDigits: 2})}`;
+        document.getElementById('cart-subtotal').textContent = formattedTotal;
+        document.getElementById('cart-total').textContent = formattedTotal;
+    }
+
+    function updateQuantityButtons(productId, currentQuantity, maxQuantity) {
+        const itemCard = document.querySelector(`div[data-product-id="${productId}"]`);
+        const decreaseBtn = itemCard.querySelector('.quantity-btn.decrease');
+        const increaseBtn = itemCard.querySelector('.quantity-btn.increase');
+
+        if (decreaseBtn) decreaseBtn.disabled = currentQuantity <= 1;
+        if (increaseBtn) increaseBtn.disabled = currentQuantity >= maxQuantity;
+    }
+
+    function showNotification(message, type) {
+        // Remove existing notifications
+        document.querySelectorAll('.notification').forEach(n => n.remove());
+
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+
+        document.body.appendChild(notification);
+
+        // Trigger animation
+        setTimeout(() => notification.classList.add('show'), 100);
+
+        // Remove notification after delay
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 400);
+        }, 4000);
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize quantity button states
+        document.querySelectorAll('.quantity-input').forEach(input => {
+            const productId = input.getAttribute('data-product-id');
+            const currentQuantity = parseInt(input.value);
+            const maxQuantity = parseInt(input.getAttribute('max'));
+            updateQuantityButtons(productId, currentQuantity, maxQuantity);
+        });
+
+        // Add input validation
+        document.querySelectorAll('.quantity-input').forEach(input => {
+            input.addEventListener('blur', function() {
+                const value = parseInt(this.value);
+                const min = parseInt(this.getAttribute('min'));
+                const max = parseInt(this.getAttribute('max'));
+
+                if (isNaN(value) || value < min) {
+                    this.value = min;
+                } else if (value > max) {
+                    this.value = max;
+                }
+            });
+        });
+    });
+</script>

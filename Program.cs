@@ -1,6 +1,7 @@
+using Endterm_IPT.DataAccess;
+
 var builder = WebApplication.CreateBuilder(args);
 
- 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSession(options =>

@@ -1,7 +1,6 @@
 ﻿@model List<Endterm_IPT.Models.Product>
-
 @{
-    ViewData["Title"] = "Gadget Shop - Home";
+    ViewData["Title"] = "Gadget Shop - Level Up Your Tech";
     Layout = "_Layout";
 }
 
@@ -206,37 +205,127 @@
                 box-shadow: 0 8px 20px rgb(0 0 0 / 0.2);
             }
 
-            .product-card img {
+        .product-image {
+            width: 100%;
+            height: 180px;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+            .product-image img {
                 width: 100%;
-                height: 180px;
+                height: 100%;
                 object-fit: cover;
             }
 
+            .product-image .placeholder-icon {
+                font-size: 3rem;
+                color: #e2231a;
+            }
+
+        .stock-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .stock-available {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .stock-low {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .stock-out {
+            background-color: #dc3545;
+            color: white;
+        }
+
         .product-card-body {
             padding: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .product-card-title {
             font-weight: 700;
             font-size: 1.1rem;
+            color: #222;
+            margin-bottom: 0.5rem;
         }
 
         .product-card-category {
             font-size: 0.85rem;
             color: #666;
+            background: rgba(226,35,26,0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            width: fit-content;
         }
 
         .product-card-description {
             font-size: 0.9rem;
             color: #444;
+            flex-grow: 1;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-card-footer {
+            margin-top: auto;
         }
 
         .product-card-price {
             font-weight: 800;
             font-size: 1.25rem;
             color: #e2231a;
-            margin-top: 1rem;
+            margin-bottom: 1rem;
         }
+
+        .product-actions {
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-view-details {
+            background-color: #e2231a;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+            .btn-view-details:hover {
+                background-color: #b21b15;
+                color: white;
+                transform: translateY(-1px);
+                text-decoration: none;
+            }
 
         .product-carousel::-webkit-scrollbar {
             height: 8px;
@@ -285,24 +374,73 @@
                 flex-wrap: wrap;
                 gap: 1rem;
             }
+
+        /* Live Search Styles */
+        .live-search-container {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .categories-products-section h3 {
+            color: #e2231a;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        /* Mobile Responsiveness */
+        @@media (max-width: 768px) {
+            .hero-banner
+
+        {
+            height: 400px;
+            padding-left: 2rem;
+        }
+
+        .hero-banner-content h1 {
+            font-size: 2.5rem;
+        }
+
+        .categories {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .category-card {
+            flex: 1 1 100%;
+        }
+
+        .product-carousel {
+            flex-direction: column;
+        }
+
+        .product-card {
+            flex: 1 1 100%;
+        }
+
+        .featured-products-section h2 {
+            font-size: 2rem;
+        }
+
+        }
     </style>
 </head>
 <body>
-
+    <!-- Navigation -->
     <!-- Hero Section -->
     <section class="hero-banner">
         <div class="hero-banner-content">
-            @* <h1>Level Up Your Tech</h1> *@
-            @* <p>Explore top gadgets from smartphones to smartwatches—all in one place.</p>
-            <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Shop Now</a> *@
+            <h1>Level Up Your Tech</h1>
+            <p>Explore top gadgets from smartphones to smartwatches—all in one place.</p>
+            <a href="#featured" class="btn btn-primary">Shop Now</a>
         </div>
     </section>
 
     <!-- Featured Products -->
-    <section class="featured-products-section">
+    <section class="featured-products-section" id="featured">
+        <!-- Live Search -->
         <div class="container mt-4">
             <div class="row mb-4 justify-content-center">
-                <div class="col-md-6">
+                <div class="col-md-6 live-search-container">
                     <input type="text" id="liveSearchInput" class="form-control" placeholder="Search products..." />
                 </div>
             </div>
@@ -310,17 +448,41 @@
 
         <h2>Find products you may like</h2>
         <div class="product-carousel" id="searchResults">
-            @foreach (var product in Model)
+            @if (Model != null && Model.Any())
             {
-                <div class="product-card">
-                    <img src="@product.ImageUrl" alt="@product.ProductName" />
-                    <div class="product-card-body">
-                        <div class="product-card-title">@product.ProductName</div>
-                        <div class="product-card-category">@product.CategoryName</div>
-                        <div class="product-card-description">@product.Description</div>
-                        <div class="product-card-price">₱@product.BasePrice.ToString("N2")</div>
+                @foreach (var product in Model)
+                {
+                    var stockBadgeClass = product.Stock <= 0 ? "stock-out" : product.Stock <= 5 ? "stock-low" : "stock-available";
+                    var stockText = product.Stock <= 0 ? "Out of Stock" : product.Stock <= 5 ? $"{product.Stock} left" : "In Stock";
+
+                    <div class="product-card">
+                        <div class="product-image">
+                            @if (!string.IsNullOrEmpty(product.ImageUrl))
+                            {
+                                <img src="@product.ImageUrl" alt="@product.ProductName" />
+                            }
+                            else
+                            {
+                                <img src="~/images/products/@(product.ProductId).jpg" alt="@product.ProductName" />
+                            }
+                            <div class="stock-badge @stockBadgeClass">@stockText</div>
+                        </div>
+                        <div class="product-card-body">
+                            <div class="product-card-title">@product.ProductName</div>
+                            <div class="product-card-category">@(product.CategoryName ?? "General")</div>
+                            <div class="product-card-description">@product.Description</div>
+                            <div class="product-card-footer">
+                                <div class="product-card-price">₱@product.BasePrice.ToString("N2")</div>
+                                <div class="product-actions">
+                                    <a class="btn-view-details" asp-controller="Product" asp-action="ViewDetails" asp-route-id="@product.ProductId">
+                                        <i class="fas fa-eye"></i>
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                }
             }
         </div>
 
@@ -329,17 +491,31 @@
             @foreach (var categoryGroup in Model.GroupBy(p => p.CategoryName))
             {
                 <div class="mb-4">
-                    <h3 class="mb-3" style="color:#e2231a">@categoryGroup.Key</h3>
+                    <h3 class="mb-3">@categoryGroup.Key</h3>
                     <div class="product-carousel">
                         @foreach (var product in categoryGroup)
                         {
+                            var stockBadgeClass = product.Stock <= 0 ? "stock-out" : product.Stock <= 5 ? "stock-low" : "stock-available";
+                            var stockText = product.Stock <= 0 ? "Out of Stock" : product.Stock <= 5 ? $"{product.Stock} left" : "In Stock";
+
                             <div class="product-card">
-                                <img src="~/images/products/@(product.ProductId).jpg" alt="@product.ProductName" />
+                                <div class="product-image">
+                                    <img src="~/images/products/@(product.ProductId).jpg" alt="@product.ProductName" />
+                                    <div class="stock-badge @stockBadgeClass">@stockText</div>
+                                </div>
                                 <div class="product-card-body">
                                     <div class="product-card-title">@product.ProductName</div>
                                     <div class="product-card-category">@product.CategoryName</div>
                                     <div class="product-card-description">@product.Description</div>
-                                    <div class="product-card-price">₱@product.BasePrice.ToString("N2")</div>
+                                    <div class="product-card-footer">
+                                        <div class="product-card-price">₱@product.BasePrice.ToString("N2")</div>
+                                        <div class="product-actions">
+                                            <a class="btn-view-details" asp-controller="Product" asp-action="ViewDetails" asp-route-id="@product.ProductId">
+                                                <i class="fas fa-eye"></i>
+                                                View Details
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         }
@@ -347,7 +523,6 @@
                 </div>
             }
         </div>
-
     </section>
 
     <!-- Footer -->
@@ -362,10 +537,10 @@
     </footer>
 
     <script>
+        // Live Search Functionality
         document.getElementById('liveSearchInput').addEventListener('input', function () {
             let query = this.value;
             if (query.trim() === "") {
-                // If input is empty, clear the results
                 document.getElementById('searchResults').innerHTML = "";
                 return;
             }
@@ -375,9 +550,25 @@
                     document.getElementById('searchResults').innerHTML = html;
                 });
         });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
     </script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    @Html.AntiForgeryToken()
 </body>
 </html>

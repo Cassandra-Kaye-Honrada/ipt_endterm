@@ -3,7 +3,6 @@ using Endterm_IPT.Models;
 using Microsoft.AspNetCore.Mvc;
 using Quibol_ASS2_3D.Models;
 using System.Data;
-using System.Diagnostics;
 
 namespace Quibol_ASS2_3D.Controllers
 {
@@ -19,15 +18,24 @@ namespace Quibol_ASS2_3D.Controllers
 
         public IActionResult Index()
         {
+            var products = GetFeaturedProducts();
+            return View(products);
+        }
+
+        private List<Product> GetFeaturedProducts()
+        {
             string query = @"
                 SELECT p.ProductId, p.ProductName, p.Description, p.BasePrice, 
-                p.Stock, p.ImageUrl, p.Status, c.CategoryName
+                       p.Stock, p.ImageUrl, p.Status, p.CategoryId, c.CategoryName
                 FROM Products p
-                INNER JOIN Categories c ON p.CategoryId = c.CategoryId";
+                LEFT JOIN Categories c ON p.CategoryId = c.CategoryId
+                WHERE p.Status = 'Active'
+                ORDER BY p.ProductId DESC
+                LIMIT 8";
 
             DataTable dt = _databaseHelper.selectQuery(query);
-
             List<Product> products = new List<Product>();
+
             foreach (DataRow row in dt.Rows)
             {
                 products.Add(new Product
@@ -39,11 +47,12 @@ namespace Quibol_ASS2_3D.Controllers
                     Stock = Convert.ToInt32(row["Stock"]),
                     ImageUrl = row["ImageUrl"].ToString(),
                     Status = row["Status"].ToString(),
+                    CategoryId = row["CategoryId"] == DBNull.Value ? (int?)null : Convert.ToInt32(row["CategoryId"]),
                     CategoryName = row["CategoryName"].ToString()
                 });
             }
 
-            return View(products);
+            return products;
         }
 
         public IActionResult SearchProducts(string query)
@@ -52,14 +61,13 @@ namespace Quibol_ASS2_3D.Controllers
             string sql;
             if (string.IsNullOrWhiteSpace(query))
             {
-                // If no query, return empty result (no products)
                 return PartialView("_ProductCardsPartial", products);
             }
             else
             {
                 string safeQuery = query.Replace("'", "''");
                 sql = $@"
-                    SELECT p.ProductId, p.ProductName, p.Description, p.BasePrice, p.Stock, p.ImageUrl, p.Status, c.CategoryName
+                    SELECT p.ProductId, p.ProductName, p.Description, p.BasePrice, p.Stock, p.ImageUrl, p.Status, p.CategoryId, c.CategoryName
                     FROM Products p
                     INNER JOIN Categories c ON p.CategoryId = c.CategoryId
                     WHERE p.ProductName LIKE '%{safeQuery}%' OR c.CategoryName LIKE '%{safeQuery}%'";
@@ -76,6 +84,7 @@ namespace Quibol_ASS2_3D.Controllers
                     Stock = Convert.ToInt32(row["Stock"]),
                     ImageUrl = row["ImageUrl"].ToString(),
                     Status = row["Status"].ToString(),
+                    CategoryId = row["CategoryId"] == DBNull.Value ? (int?)null : Convert.ToInt32(row["CategoryId"]),
                     CategoryName = row["CategoryName"].ToString()
                 });
             }
@@ -91,7 +100,7 @@ namespace Quibol_ASS2_3D.Controllers
             string safeQuery = query.Replace("'", "''");
 
             string sql = $@"
-                SELECT p.ProductId, p.ProductName, p.Description, p.BasePrice, p.Stock, p.ImageUrl, p.Status, c.CategoryName
+                SELECT p.ProductId, p.ProductName, p.Description, p.BasePrice, p.Stock, p.ImageUrl, p.Status, p.CategoryId, c.CategoryName
                 FROM Products p
                 LEFT JOIN Categories c ON p.CategoryId = c.CategoryId
                 WHERE p.ProductName LIKE '%{safeQuery}%' AND p.Status = 'Active'
@@ -111,6 +120,7 @@ namespace Quibol_ASS2_3D.Controllers
                     Stock = Convert.ToInt32(row["Stock"]),
                     ImageUrl = row["ImageUrl"].ToString(),
                     Status = row["Status"].ToString(),
+                    CategoryId = row["CategoryId"] == DBNull.Value ? (int?)null : Convert.ToInt32(row["CategoryId"]),
                     CategoryName = row["CategoryName"]?.ToString() ?? ""
                 });
             }
@@ -122,8 +132,8 @@ namespace Quibol_ASS2_3D.Controllers
         {
             string query = $@"
                 SELECT p.*, c.CategoryName 
-                FROM products p 
-                JOIN categories c ON p.CategoryId = c.CategoryId 
+                FROM Products p 
+                JOIN Categories c ON p.CategoryId = c.CategoryId 
                 WHERE p.ProductId = {id} 
                 LIMIT 1";
 
@@ -144,6 +154,7 @@ namespace Quibol_ASS2_3D.Controllers
                 Stock = Convert.ToInt32(row["Stock"]),
                 ImageUrl = row["ImageUrl"].ToString(),
                 Status = row["Status"].ToString(),
+                CategoryId = row["CategoryId"] == DBNull.Value ? (int?)null : Convert.ToInt32(row["CategoryId"]),
                 CategoryName = row["CategoryName"].ToString()
             };
 
